@@ -91,4 +91,4 @@ Outputs:
 
   HealthFunctionUrl:
     Description: Health check endpoint
-    Value: !Sub "https://$ServerlessHttpApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/health"
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/health"

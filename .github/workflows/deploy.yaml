@@ -19,12 +19,35 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+      
+      - name: Deploy Artifact Bucket
+        run: | 
+          aws cloudformation deploy \
+            --template-file infra/artifact-bucket-template.yaml \
+            --stack-name eranova-takehome-artifact-bucket
+
+      - name: Get artifact bucket
+        run: |
+          ARTIFACT_BUCKET=$(aws cloudformation describe-stacks \
+            --stack-name eranova-takehome-artifact-bucket \
+            --query "Stacks[0].Outputs[?OutputKey=='ArtifactBucketName'].OutputValue" \
+            --output text)
+
+          echo "ARTIFACT_BUCKET=$ARTIFACT_BUCKET" >> $GITHUB_ENV
+      
+      - name: Package infrastructure
+        run: |
+          aws cloudformation package \
+            --template-file infra/template.yaml \
+            --s3-bucket $ARTIFACT_BUCKET \
+            --output-template-file packaged-template.yaml
 
       - name: Deploy infrastructure
         run: | 
           aws cloudformation deploy \
-            --template-file infra/template.yaml \
+            --template-file packaged-template.yaml \
             --stack-name eranova-takehome
+            --capabilities CAPABILITY_IAM
 
       - name: Build frontend
         working-directory: frontend
