@@ -192,15 +192,15 @@ Resources:
         RestrictPublicBuckets: true
 
   InvoicesMetadataTable:
-  Type: AWS::DynamoDB::Table
-  Properties:
-    BillingMode: PAY_PER_REQUEST
-    AttributeDefinitions:
-      - AttributeName: invoice_id
-        AttributeType: S
-    KeySchema:
-      - AttributeName: invoice_id
-        KeyType: HASH
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: invoice_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: invoice_id
+          KeyType: HASH
 
   InvoiceExtractionsTable:
     Type: AWS::DynamoDB::Table
@@ -225,4 +225,4 @@ Outputs:
 
   HealthFunctionUrl:
     Description: Health check endpoint
-    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/health"
+    Value: !Sub "https://${EranovaApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/health"
