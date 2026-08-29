@@ -65,6 +65,20 @@ Resources:
                   - "arn:aws:cloudfront::${AWS::AccountId}:distribution/${DistributionId}"
                   - DistributionId: !Ref CloudFrontDistribution
 
+
+  # Eranova Gateway
+  EranovaApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowOrigins:
+          - "*"
+        AllowHeaders:
+          - "*"
+        AllowMethods:
+          - GET
+          - POST
+          
   # Lambdas
   HealthFunction:
     Type: AWS::Serverless::Function
@@ -76,8 +90,128 @@ Resources:
         Health:
           Type: HttpApi
           Properties:
+            ApiId: !Ref EranovaApi
             Path: /health
             Method: GET
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref InvoicesBucket
+        - DynamoDBCrudPolicy:
+            TableName: !Ref InvoicesMetadataTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref InvoiceExtractionsTable
+      Environment:
+        Variables:
+          INVOICES_BUCKET: !Ref InvoicesBucket
+          INVOICE_METADATA_TABLE: !Ref InvoicesMetadataTable
+          INVOICE_EXTRACTIONS_TABLE: !Ref InvoiceExtractionsTable
+
+  CreateInvoiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../backend/lambdas
+      Handler: create_invoice.handler
+      Runtime: python3.12
+
+      Events:
+        CreateInvoice:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref EranovaApi
+            Path: /invoices
+            Method: POST
+
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref InvoicesBucket
+        - DynamoDBCrudPolicy:
+            TableName: !Ref InvoicesMetadataTable
+
+      Environment:
+        Variables:
+          INVOICES_BUCKET: !Ref InvoicesBucket
+          INVOICE_METADATA_TABLE: !Ref InvoicesMetadataTable
+
+
+  ListInvoicesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../backend/lambdas
+      Handler: list_invoices.handler
+      Runtime: python3.12
+
+      Events:
+        ListInvoices:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref EranovaApi
+            Path: /invoices
+            Method: GET
+
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref InvoicesMetadataTable
+
+      Environment:
+        Variables:
+          INVOICE_METADATA_TABLE: !Ref InvoicesMetadataTable
+
+
+  GetInvoiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../backend/lambdas
+      Handler: get_invoice.handler
+      Runtime: python3.12
+
+      Events:
+        GetInvoice:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref EranovaApi
+            Path: /invoices/{invoice_id}
+            Method: GET
+
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref InvoicesMetadataTable
+
+      Environment:
+        Variables:
+          INVOICE_METADATA_TABLE: !Ref InvoicesMetadataTable
+
+
+  # Storage - S3 For Invoices, Dynamo for Metadata Tables + Extraction Documents
+  InvoicesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        RestrictPublicBuckets: true
+
+  InvoicesMetadataTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    BillingMode: PAY_PER_REQUEST
+    AttributeDefinitions:
+      - AttributeName: invoice_id
+        AttributeType: S
+    KeySchema:
+      - AttributeName: invoice_id
+        KeyType: HASH
+
+  InvoiceExtractionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: extraction_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: extraction_id
+          KeyType: HASH
 
 Outputs:
   FrontendBucketName:
