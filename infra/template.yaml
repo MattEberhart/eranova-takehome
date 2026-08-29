@@ -1,0 +1,73 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Resources:
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        RestrictPublicBuckets: true
+
+  CloudFrontOriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+    OriginAccessControlConfig:
+      Name: !Sub "${AWS:StackName}-oac"
+      OriginAccessControlOriginType: s3
+      SigningBehavior: always
+      SigningProtocol: sigv4
+
+  CloudFrontDistribution:
+    Type: AWS:CloudFront::Distribution
+    Propreties:
+      DistributionConfig:
+        Enabled: true
+        DefaultRootObject: index.html
+
+      Origins:
+        - Id: FrontendS3Origin
+          Domain: $GetAtt FrontendBucket.RegionalDomainName
+          OriginAccessControlId: $Ref CloudFrontOriginAccessControl
+          S3OriginConfig: {}
+
+      DefaultCacheBehavior:
+        TargetOriginId: FrontendS3Origin
+        ViewerProtocolPolicy: redirect-to-https
+        AllowedMethods:
+          - Get
+          - HEAD
+        CachedMethods:
+          - GET
+          - HEAD
+        ForwardedValues:
+          QueryString: false
+  
+  FrontendBucketPolicy:
+    Type: AWS::S3::BucketPolicy 
+    Properties:
+      Bucket: !Ref FrontendBucket 
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allowed
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub "${FrontendBucket.Arn}/*"
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub
+                  - "arn:aws:cloudfront::${AWS::AccountId}:distribution/${DistributionId}"
+                  - DistributionId: !Ref CloudFrontDistribution
+
+Outputs:
+  FrontendBucketName:
+    Value: !Ref FrontendBucket
+
+  CloudFrontDistributionId:
+    Value: !Ref CloudFrontDistribution
+
+  FrontendUrl:
+    Value: !Sub "https://${CloudFrontDistribution.DomainName}"

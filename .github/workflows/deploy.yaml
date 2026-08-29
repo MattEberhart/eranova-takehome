@@ -1,0 +1,57 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS
+        uses: aws-action/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy infrastructure
+        run: | 
+          aws cloudformation deploy \
+          -- template-file infra/template.yaml \ 
+          --stack-name eranova-takehome
+
+      - name: Build frontend
+        working-directory: frontend
+        run: | 
+          npm ci 
+          npm run build 
+
+      - name: Get infrastructure outputs
+        run: |
+          BUCKET=$(aws cloudformation describe-stacks \
+            --stack-name eranova-takehome \
+            --query "Stacks[0].Outputs[?OutputKey=='FrontendBucketName'].OutputValue" \
+            --output text)
+
+          DISTRIBUTION=$(aws cloudformation describe-stacks \
+            --stack-name eranova-takehome \
+            --query "Stacks[0].Outputs[?OutputKey=='CloudFrontDistributionId'].OutputValue" \
+            --output text)
+
+          echo "BUCKET=$BUCKET" >> $GITHUB_ENV
+          echo "DISTRIBUTION=$DISTRIBUTION" >> $GITHUB_ENV
+
+      - name: Upload frontend
+        run: aws s3 sync frontend/out/ s3://$BUCKET --delete
+
+      - name: Invalidate CloudFront
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id $DISTRIBUTION \
+            --paths "/*"
