@@ -26,23 +26,23 @@ Resources:
         Enabled: true
         DefaultRootObject: index.html
 
-      Origins:
-        - Id: FrontendS3Origin
-          Domain: $GetAtt FrontendBucket.RegionalDomainName
-          OriginAccessControlId: $Ref CloudFrontOriginAccessControl
-          S3OriginConfig: {}
+        Origins:
+          - Id: FrontendS3Origin
+            DomainName: $GetAtt FrontendBucket.RegionalDomainName
+            OriginAccessControlId: $Ref CloudFrontOriginAccessControl
+            S3OriginConfig: {}
 
-      DefaultCacheBehavior:
-        TargetOriginId: FrontendS3Origin
-        ViewerProtocolPolicy: redirect-to-https
-        AllowedMethods:
-          - Get
-          - HEAD
-        CachedMethods:
-          - GET
-          - HEAD
-        ForwardedValues:
-          QueryString: false
+        DefaultCacheBehavior:
+          TargetOriginId: FrontendS3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - Get
+            - HEAD
+          CachedMethods:
+            - GET
+            - HEAD
+          ForwardedValues:
+            QueryString: false
   
   FrontendBucketPolicy:
     Type: AWS::S3::BucketPolicy 
