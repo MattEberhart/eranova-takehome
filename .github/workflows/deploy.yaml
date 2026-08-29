@@ -23,7 +23,7 @@ jobs:
       - name: Deploy infrastructure
         run: | 
           aws cloudformation deploy \
-            --template-file infra/template.yaml \ 
+            --template-file infra/template.yaml \
             --stack-name eranova-takehome
 
       - name: Build frontend
