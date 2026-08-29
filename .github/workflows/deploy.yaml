@@ -46,7 +46,7 @@ jobs:
         run: | 
           aws cloudformation deploy \
             --template-file packaged-template.yaml \
-            --stack-name eranova-takehome
+            --stack-name eranova-takehome \
             --capabilities CAPABILITY_IAM
 
       - name: Build frontend
