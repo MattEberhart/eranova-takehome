@@ -1,4 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
 
 Resources:
   # Front End (S3 + CloudFront)
@@ -29,8 +31,8 @@ Resources:
 
         Origins:
           - Id: FrontendS3Origin
-            DomainName: $GetAtt FrontendBucket.RegionalDomainName
-            OriginAccessControlId: $Ref CloudFrontOriginAccessControl
+            DomainName: !GetAtt FrontendBucket.RegionalDomainName
+            OriginAccessControlId: !Ref CloudFrontOriginAccessControl
             S3OriginConfig: {}
 
         DefaultCacheBehavior:
@@ -64,6 +66,18 @@ Resources:
                   - DistributionId: !Ref CloudFrontDistribution
 
   # Lambdas
+  HealthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../backend/lambdas
+      Handler: health.handler
+      Runtime: python3.12
+      Events:
+        Health:
+          Type: HttpApi
+          Properties:
+            Path: /health
+            Method: GET
 
 Outputs:
   FrontendBucketName:
@@ -74,3 +88,7 @@ Outputs:
 
   FrontendUrl:
     Value: !Sub "https://${CloudFrontDistribution.DomainName}"
+
+  HealthFunctionUrl:
+    Description: Health check endpoint
+    Value: !Sub "https://$ServerlessHttpApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/health"
