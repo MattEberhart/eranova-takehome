@@ -13,15 +13,15 @@ Resources:
   CloudFrontOriginAccessControl:
     Type: AWS::CloudFront::OriginAccessControl
     Properties:
-    OriginAccessControlConfig:
-      Name: !Sub "${AWS:StackName}-oac"
-      OriginAccessControlOriginType: s3
-      SigningBehavior: always
-      SigningProtocol: sigv4
+      OriginAccessControlConfig:
+        Name: !Sub "${AWS::StackName}-oac"
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
 
   CloudFrontDistribution:
-    Type: AWS:CloudFront::Distribution
-    Propreties:
+    Type: AWS::CloudFront::Distribution
+    Properties:
       DistributionConfig:
         Enabled: true
         DefaultRootObject: index.html
@@ -51,7 +51,7 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Effect: Allowed
+          - Effect: Allow
             Principal:
               Service: cloudfront.amazonaws.com
             Action: s3:GetObject
