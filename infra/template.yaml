@@ -1,6 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
 Resources:
+  # Front End (S3 + CloudFront)
   FrontendBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -36,7 +37,7 @@ Resources:
           TargetOriginId: FrontendS3Origin
           ViewerProtocolPolicy: redirect-to-https
           AllowedMethods:
-            - Get
+            - GET
             - HEAD
           CachedMethods:
             - GET
@@ -61,6 +62,8 @@ Resources:
                 AWS:SourceArn: !Sub
                   - "arn:aws:cloudfront::${AWS::AccountId}:distribution/${DistributionId}"
                   - DistributionId: !Ref CloudFrontDistribution
+
+  # Lambdas
 
 Outputs:
   FrontendBucketName:
