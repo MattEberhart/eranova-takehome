@@ -66,8 +66,8 @@ class InvoiceService:
             "put_object",
             Params={
                 "Bucket": self.bucket,
-                "Key": invoice.source_s3_key,
-                "ContentType": invoice.content_type,
+                "Key": invoice.s3_key,
+                "ContentType": invoice.content_type
             },
             ExpiresIn=900,
         )
