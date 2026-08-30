@@ -207,7 +207,7 @@ Resources:
 
       Environment:
         Variables:
-          INVOICES_BUCKET: !Ref InvoicesBucket
+          INVOICES_BUCKET: !Sub "eranova-takehome-invoices-${AWS::AccountId}-${AWS::Region}"
           INVOICE_METADATA_TABLE: !Ref InvoicesMetadataTable
           INVOICE_EXTRACTIONS_TABLE: !Ref InvoiceExtractionsTable
 
