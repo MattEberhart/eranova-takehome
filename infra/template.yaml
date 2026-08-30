@@ -210,6 +210,10 @@ Resources:
           INVOICES_BUCKET: !Sub "eranova-takehome-invoices-${AWS::AccountId}-${AWS::Region}"
           INVOICE_METADATA_TABLE: !Ref InvoicesMetadataTable
           INVOICE_EXTRACTIONS_TABLE: !Ref InvoiceExtractionsTable
+          OPENAI_API_KEY: !Sub "{{resolve:secretsmanager:${OpenAIKey}:SecretString}}"
+          LANGSMITH_API_KEY: !Sub "{{resolve:secretsmanager:${LangSmithKey}:SecretString}}"
+          LANGSMITH_TRACING: "true"
+          LANGSMITH_PROJECT: "eranova-takehome"
 
 
   # Storage - S3 For Invoices, Dynamo for Metadata Tables + Extraction Documents
@@ -244,6 +248,17 @@ Resources:
       KeySchema:
         - AttributeName: extraction_id
           KeyType: HASH
+
+  # Secrets / Keys - Create Only - Values Set Manually so Not In Source Control
+  OpenAIKey:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: eranova-takehome/openai-api-key
+
+  LangSmithKey:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: eranova-takehome/langsmith-api-key
 
 Outputs:
   FrontendBucketName:
