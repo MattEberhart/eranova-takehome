@@ -32,7 +32,7 @@ class InvoiceService:
             Item=invoice_metadata.model_dump(mode="json")
         )
 
-        return invoice
+        return invoice_metadata
 
 
     def get_invoice(
@@ -42,7 +42,7 @@ class InvoiceService:
             Key={"invoiceId": invoice_id}
         )
 
-        item = repsonse.get("Item")
+        item = response.get("Item")
 
         if item is None:
             return None
@@ -53,7 +53,7 @@ class InvoiceService:
     def list_invoices(
         self,
         limit: int = 10) -> list[InvoiceMetadata]:
-        response = metadata_table.scan(Limit=limit)
+        response = self.table.scan(Limit=limit)
         return [
             InvoiceMetadata.model_validate(item)
             for item in response.get("Items", [])
