@@ -10,8 +10,10 @@ def handler(event, context):
     return {
         "statusCode": 200,
         "headers": {"Content-Type": "application/json"},
-        "body": json.dumps([
+        "body": {
+            "invoices": json.dumps([
             invoice.model_dump(mode="json")
             for invoice in invoices
         ]),
+        }
     }
