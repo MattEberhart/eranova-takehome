@@ -40,7 +40,7 @@ class InvoiceService:
         self,
         invoice_id:str) -> InvoiceMetadata | None:
         response = self.table.get_item(
-            Key={"invoiceId": invoice_id}
+            Key={"invoice_id": invoice_id}
         )
 
         item = response.get("Item")
