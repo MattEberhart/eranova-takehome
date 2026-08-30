@@ -183,6 +183,8 @@ Resources:
   # Slightly different - triggers on S3 Event Not Path
   # Needs CRUD on both tables and read on invoices bucket
   # Still all 3 environment variables to initialize invoice_service
+  # Also needs env variables for LangChain / Langsmith SDK. Using Dynamic secrets to set.
+  # Had to do name over ref for invoices bucket to avoid cirular dependency.
   ProcessInvoiceFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -210,8 +212,8 @@ Resources:
           INVOICES_BUCKET: !Sub "eranova-takehome-invoices-${AWS::AccountId}-${AWS::Region}"
           INVOICE_METADATA_TABLE: !Ref InvoicesMetadataTable
           INVOICE_EXTRACTIONS_TABLE: !Ref InvoiceExtractionsTable
-          #OPENAI_API_KEY: !Sub "{{resolve:secretsmanager:${OpenAIKey}:SecretString}}"
-          #LANGSMITH_API_KEY: !Sub "{{resolve:secretsmanager:${LangSmithKey}:SecretString}}"
+          OPENAI_API_KEY: !Sub "{{resolve:secretsmanager:${OpenAIKey}:SecretString}}"
+          LANGSMITH_API_KEY: !Sub "{{resolve:secretsmanager:${LangSmithKey}:SecretString}}"
           LANGSMITH_TRACING: "true"
           LANGSMITH_PROJECT: "eranova-takehome"
 
