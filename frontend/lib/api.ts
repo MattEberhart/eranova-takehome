@@ -31,14 +31,14 @@ export async function createInvoice(file: File): Promise<InvoiceMetadata> {
         }
     );
 
-    if (!response)
+    if (!response || response.status != 201)
     {
         throw new Error("Failed to create invoice table record.")
     }
 
     var data = await response.json();
     
-    var uploadResponse = await fetch(data.uploadUrl, {
+    var uploadResponse = await fetch(data.upload_url, {
         method: "PUT",
         headers: {
             "Content-Type": file.type || "application/octet-stream",

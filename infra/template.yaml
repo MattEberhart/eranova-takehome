@@ -72,7 +72,8 @@ Resources:
     Properties:
       CorsConfiguration:
         AllowOrigins:
-          - "*"
+          - "https://localhost:3000" # Would be removed in a production scenario. Only for local testing.
+          - !Sub "https://${CloudFrontDistribution.DomainName}"
         AllowHeaders:
           - "*"
         AllowMethods:
@@ -228,6 +229,18 @@ Resources:
         IgnorePublicAcls: true
         BlockPublicPolicy: true
         RestrictPublicBuckets: true
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - "https://localhost:3000" # Would be removed in a production scenario. Only for local testing.
+              - !Sub "https://${CloudFrontDistribution.DomainName}"
+            AllowedMethods:
+              - PUT
+            AllowedHeaders:
+              - "*"
+            ExposedHeaders:
+              - ETag
+            MaxAge: 3600
 
   InvoicesMetadataTable:
     Type: AWS::DynamoDB::Table
