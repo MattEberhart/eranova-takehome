@@ -83,8 +83,8 @@ Resources:
   HealthFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../backend/lambdas
-      Handler: health.handler
+      CodeUri: ../backend/
+      Handler: lambdas.health.handler
       Runtime: python3.12
       Events:
         Health:
@@ -109,8 +109,8 @@ Resources:
   CreateInvoiceFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../backend/lambdas
-      Handler: create_invoice.handler
+      CodeUri: ../backend/
+      Handler: lambdas.create_invoice.handler
       Runtime: python3.12
 
       Events:
@@ -136,8 +136,8 @@ Resources:
   ListInvoicesFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../backend/lambdas
-      Handler: list_invoices.handler
+      CodeUri: ../backend/
+      Handler: lambdas.list_invoices.handler
       Runtime: python3.12
 
       Events:
@@ -160,8 +160,8 @@ Resources:
   GetInvoiceFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../backend/lambdas
-      Handler: get_invoice.handler
+      CodeUri: ../backend/
+      Handler: lambdas.get_invoice.handler
       Runtime: python3.12
 
       Events:
