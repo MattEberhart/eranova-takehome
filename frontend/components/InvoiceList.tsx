@@ -38,9 +38,9 @@ export default function InvoiceList({
           <div>
             <p className="font-medium">{invoice.filename}</p>
 
-            <p className="mt-1 text-sm text-zinc-500">
+            {(invoice.uploaded_at && <p className="mt-1 text-sm text-zinc-500">
               {new Date(invoice.uploaded_at).toLocaleString()}
-            </p>
+            </p>)}
           </div>
 
           <span className="rounded-full bg-zinc-800 px-3 py-1 text-xs">

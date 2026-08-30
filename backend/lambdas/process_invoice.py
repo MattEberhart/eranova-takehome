@@ -13,7 +13,7 @@ def handler(event, context):
     s3_key_pieces = s3_key.split("/")
     invoice_id = s3_key_pieces[1]
 
-    service.mark_invoice_processing(invoice_id=invoice_id, status=InvoiceStatus)
+    service.mark_invoice_processing(invoice_id=invoice_id, status=InvoiceStatus.PROCESSING)
 
     return {
             "statusCode": 200,
