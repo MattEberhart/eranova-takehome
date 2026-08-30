@@ -200,7 +200,7 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref InvoicesMetadataTable
-        - DyanamoDBCrudPolicy:
+        - DynamoDBCrudPolicy:
             TableName: !Ref InvoiceExtractionsTable
         - S3ReadPolicy:
             BucketName: !Ref InvoicesBucket
