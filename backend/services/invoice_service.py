@@ -34,17 +34,6 @@ class InvoiceService:
 
         return invoice_metadata
 
-    def put_invoice(
-        self,
-        invoice_metadata: InvoiceMetadata
-    ) -> InvoiceMetadata:
-        self.table.put_item(
-            Item=invoice_metadata.model_dump(mode="json")
-        )
-
-        return invoice_metadata
-
-
     def get_invoice(
         self,
         invoice_id:str) -> InvoiceMetadata | None:
@@ -81,3 +70,25 @@ class InvoiceService:
             },
             ExpiresIn=900,
         )
+
+    def update_invoice_status(
+            self,
+            invoice_id: str,
+            status: InvoiceStatus
+    ) -> InvoiceMetadata:
+        response = self.table.update_item(
+            Key={
+                "invoice_id": invoice_id
+            },
+            UpdateExpression="SET #status = :status",
+            ExpressionAttributeNames={
+                "status": "status"
+            },
+            ExpressionAttributeValues={
+                ":status": status.value
+            },
+            ReturnValues="ALL_NEW"
+        )
+
+        return InvoiceMetadata(**response["Attributes"])
+        

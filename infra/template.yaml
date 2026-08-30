@@ -180,6 +180,37 @@ Resources:
           INVOICE_METADATA_TABLE: !Ref InvoicesMetadataTable
           INVOICE_EXTRACTIONS_TABLE: !Ref InvoiceExtractionsTable
 
+    # Slightly different - triggers on S3 Event Not Path
+    # Needs CRUD on both tables and read on invoices bucket
+    # Still all 3 environment variables to initialize invoice_service
+    ProcessInvoiceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../backend/
+      Handler: lambdas.process_invoice.handler
+      Runtime: python3.12
+
+      Events:
+        InvoiceUploaded:
+          Type: S3
+          Properties:
+            Bucket: !Ref InvoicesBucket
+            Events: s3:ObjectCreated:*
+
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref InvoicesMetadataTable
+        - DyanamoDBCrudPolicy:
+            TableName: !Ref InvoiceExtractionsTable
+        - S3ReadPolicy:
+            BucketName: !Ref InvoicesBucket
+
+      Environment:
+        Variables:
+          INVOICES_BUCKET: !Ref InvoicesBucket
+          INVOICE_METADATA_TABLE: !Ref InvoicesMetadataTable
+          INVOICE_EXTRACTIONS_TABLE: !Ref InvoiceExtractionsTable
+
 
   # Storage - S3 For Invoices, Dynamo for Metadata Tables + Extraction Documents
   InvoicesBucket:
