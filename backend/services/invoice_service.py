@@ -1,7 +1,7 @@
 import boto3
 import os
 import uuid
-from ..models.invoice import InvoiceMetadata, InvoiceStatus
+from models.invoice import InvoiceMetadata, InvoiceStatus
 
 class InvoiceService:
     def init(self):
