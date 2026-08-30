@@ -4,7 +4,7 @@ import uuid
 from models.invoice import InvoiceMetadata, InvoiceStatus
 
 class InvoiceService:
-    def init(self):
+    def __init__(self):
         self.dynamodb = boto3.resource("dynamodb")
         self.table = self.dynamodb.Table(os.environ["INVOICE_METADATA_TABLE"])
 
