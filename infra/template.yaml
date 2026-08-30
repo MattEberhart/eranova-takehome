@@ -100,11 +100,6 @@ Resources:
             TableName: !Ref InvoicesMetadataTable
         - DynamoDBCrudPolicy:
             TableName: !Ref InvoiceExtractionsTable
-      Environment:
-        Variables:
-          INVOICES_BUCKET: !Ref InvoicesBucket
-          INVOICE_METADATA_TABLE: !Ref InvoicesMetadataTable
-          INVOICE_EXTRACTIONS_TABLE: !Ref InvoiceExtractionsTable
 
   CreateInvoiceFunction:
     Type: AWS::Serverless::Function
@@ -131,6 +126,7 @@ Resources:
         Variables:
           INVOICES_BUCKET: !Ref InvoicesBucket
           INVOICE_METADATA_TABLE: !Ref InvoicesMetadataTable
+          INVOICE_EXTRACTIONS_TABLE: !Ref InvoiceExtractionsTable
 
 
   ListInvoicesFunction:
@@ -154,7 +150,9 @@ Resources:
 
       Environment:
         Variables:
+          INVOICES_BUCKET: !Ref InvoicesBucket
           INVOICE_METADATA_TABLE: !Ref InvoicesMetadataTable
+          INVOICE_EXTRACTIONS_TABLE: !Ref InvoiceExtractionsTable
 
 
   GetInvoiceFunction:
@@ -178,7 +176,9 @@ Resources:
 
       Environment:
         Variables:
+          INVOICES_BUCKET: !Ref InvoicesBucket
           INVOICE_METADATA_TABLE: !Ref InvoicesMetadataTable
+          INVOICE_EXTRACTIONS_TABLE: !Ref InvoiceExtractionsTable
 
 
   # Storage - S3 For Invoices, Dynamo for Metadata Tables + Extraction Documents
