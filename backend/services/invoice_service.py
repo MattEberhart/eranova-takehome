@@ -84,10 +84,10 @@ class InvoiceService:
             },
             UpdateExpression="SET #status = :status, uploaded_at = :uploaded_at",
             ExpressionAttributeNames={
-                "status": "status"
+                "#status": "status" # status is a reserved DynamoDb word which is why we need this
             },
             ExpressionAttributeValues={
-                ":status": InvoiceStatus.PROCESSING.value,
+                ":status": status.value,
                 ":uploaded_at": datetime.now(timezone.utc).isoformat()
             },
             ReturnValues="ALL_NEW"
