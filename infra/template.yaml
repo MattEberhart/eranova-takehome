@@ -210,8 +210,8 @@ Resources:
           INVOICES_BUCKET: !Sub "eranova-takehome-invoices-${AWS::AccountId}-${AWS::Region}"
           INVOICE_METADATA_TABLE: !Ref InvoicesMetadataTable
           INVOICE_EXTRACTIONS_TABLE: !Ref InvoiceExtractionsTable
-          OPENAI_API_KEY: !Sub "{{resolve:secretsmanager:${OpenAIKey}:SecretString}}"
-          LANGSMITH_API_KEY: !Sub "{{resolve:secretsmanager:${LangSmithKey}:SecretString}}"
+          #OPENAI_API_KEY: !Sub "{{resolve:secretsmanager:${OpenAIKey}:SecretString}}"
+          #LANGSMITH_API_KEY: !Sub "{{resolve:secretsmanager:${LangSmithKey}:SecretString}}"
           LANGSMITH_TRACING: "true"
           LANGSMITH_PROJECT: "eranova-takehome"
 
