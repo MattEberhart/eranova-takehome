@@ -15,7 +15,7 @@ export default function InvoiceList({
     return <p className="text-zinc-400">Loading invoices...</p>;
   }
 
-  if (invoices.length === 0) {
+  if (!invoices || invoices.length === 0) {
     return (
       <div className="rounded-xl border border-zinc-800 p-12 text-center">
         <h2 className="text-lg font-medium">No invoices yet</h2>
