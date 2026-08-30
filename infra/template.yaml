@@ -203,7 +203,7 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: !Ref InvoiceExtractionsTable
         - S3ReadPolicy:
-            BucketName: !Ref InvoicesBucket
+            BucketName: !Sub "eranova-takehome-invoices-${AWS::AccountId}-${AWS::Region}"
 
       Environment:
         Variables:
@@ -216,6 +216,7 @@ Resources:
   InvoicesBucket:
     Type: AWS::S3::Bucket
     Properties:
+      BucketName: !Sub "eranova-takehome-invoices-${AWS::AccountId}-${AWS::Region}"
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         IgnorePublicAcls: true
