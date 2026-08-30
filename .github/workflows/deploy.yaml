@@ -51,6 +51,8 @@ jobs:
 
       - name: Build frontend
         working-directory: frontend
+        env:
+          NEXT_PUBLIC_API_URL: https://b0yln5nqge.execute-api.us-east-1.amazonaws.com
         run: | 
           npm ci 
           npm run build 
