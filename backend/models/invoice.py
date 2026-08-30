@@ -13,4 +13,4 @@ class InvoiceMetadata(BaseModel):
     s3_key: str
     content_type: str
     status: InvoiceStatus
-    uploaded_at: datetime
+    uploaded_at: datetime | None

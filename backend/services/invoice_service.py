@@ -2,6 +2,7 @@ import boto3
 import os
 import uuid
 from models.invoice import InvoiceMetadata, InvoiceStatus
+from datetime import datetime, timezone
 
 class InvoiceService:
     def __init__(self):
@@ -71,7 +72,7 @@ class InvoiceService:
             ExpiresIn=900,
         )
 
-    def update_invoice_status(
+    def mark_invoice_processing(
             self,
             invoice_id: str,
             status: InvoiceStatus
@@ -80,12 +81,13 @@ class InvoiceService:
             Key={
                 "invoice_id": invoice_id
             },
-            UpdateExpression="SET #status = :status",
+            UpdateExpression="SET #status = :status, uploaded_at = :uploaded_at",
             ExpressionAttributeNames={
                 "status": "status"
             },
             ExpressionAttributeValues={
-                ":status": status.value
+                ":status": InvoiceStatus.PROCESSING.value,
+                ":uploaded_at": datetime.now(timezone.utc).isoformat()
             },
             ReturnValues="ALL_NEW"
         )
