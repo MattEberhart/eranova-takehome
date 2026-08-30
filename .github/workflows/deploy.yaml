@@ -20,6 +20,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       
+      # Bootstrapping an s3 bucket to push the serverless artifactrs to
       - name: Deploy Artifact Bucket
         run: | 
           aws cloudformation deploy \
@@ -35,13 +36,28 @@ jobs:
 
           echo "ARTIFACT_BUCKET=$ARTIFACT_BUCKET" >> $GITHUB_ENV
       
+      # SAM reads infra/template.yaml to figure out the lambda (serverless) path requirements
+      # Builds those root directories, this will include our requirements.txt that was missing before
+      # Generates .aws-sam/build/template.yaml that will inform cloud formation what to package
+      - name: Setup SAM # Serverless Application Management
+        uses: aws-actions/setup-sam@v2
+
+      # Generates .aws-sam/build/template.yaml for cf. Fixes our missing requirements.txt requirements
+      - name: Build SAM Application
+        run: |
+          sam build \
+            --template-file infra/template.yaml
+
+      # Package code base don .aws-sam/build/template.yaml
+      # packaged-template.yaml now informs cf how to deploy
       - name: Package infrastructure
         run: |
           aws cloudformation package \
-            --template-file infra/template.yaml \
+            --template-file .aws-sam/build/template.yaml \
             --s3-bucket $ARTIFACT_BUCKET \
             --output-template-file packaged-template.yaml
 
+      # cd deploys based on packaged-template instructions
       - name: Deploy infrastructure
         run: | 
           aws cloudformation deploy \
@@ -49,6 +65,7 @@ jobs:
             --stack-name eranova-takehome \
             --capabilities CAPABILITY_IAM
 
+      # build front end with public environment variables
       - name: Build frontend
         working-directory: frontend
         env:
@@ -57,6 +74,7 @@ jobs:
           npm ci 
           npm run build 
 
+      # Gets front end bucket name
       - name: Get infrastructure outputs
         run: |
           BUCKET=$(aws cloudformation describe-stacks \
@@ -72,10 +90,12 @@ jobs:
           echo "BUCKET=$BUCKET" >> $GITHUB_ENV
           echo "DISTRIBUTION=$DISTRIBUTION" >> $GITHUB_ENV
 
+      # Pushes the packaged front end to s3 for CloudFront to serve
       - name: Upload frontend
         run: aws s3 sync frontend/out/ s3://$BUCKET --delete
 
-      - name: Invalidate CloudFront
+      # Tells cloudfront to forget the cache, we have new bits
+      - name: Invalidate CloudFront Cache
         run: |
           aws cloudfront create-invalidation \
             --distribution-id $DISTRIBUTION \
