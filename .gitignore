@@ -14,3 +14,6 @@ frontend/out/
 
 # macOS
 .DS_Store
+
+# SAM (Serverless Application Manager)
+.aws-sam
