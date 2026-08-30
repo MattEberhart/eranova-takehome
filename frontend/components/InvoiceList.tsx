@@ -31,7 +31,7 @@ export default function InvoiceList({
     <div className="overflow-hidden rounded-xl border border-zinc-800">
       {invoices.map((invoice) => (
         <button
-          key={invoice.id}
+          key={invoice.invoice_id}
           onClick={() => onSelect(invoice)}
           className="flex w-full items-center justify-between border-b border-zinc-800 px-6 py-5 text-left last:border-b-0 hover:bg-zinc-900"
         >
@@ -39,7 +39,7 @@ export default function InvoiceList({
             <p className="font-medium">{invoice.filename}</p>
 
             <p className="mt-1 text-sm text-zinc-500">
-              {new Date(invoice.createdAt).toLocaleString()}
+              {new Date(invoice.uploaded_at).toLocaleString()}
             </p>
           </div>
 

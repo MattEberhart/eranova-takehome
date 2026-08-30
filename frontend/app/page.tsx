@@ -67,7 +67,7 @@ export default function Home() {
   async function handleInvoiceClick(invoice: InvoiceMetadata) {
     try 
     {
-      const data = await getInvoice(invoice.id);
+      const data = await getInvoice(invoice.invoice_id);
 
       setSelectedInvoice(data.invoice);
       setDocumentUrl(data.documentUrl);

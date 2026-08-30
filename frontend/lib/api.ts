@@ -49,6 +49,8 @@ export async function createInvoice(file: File): Promise<InvoiceMetadata> {
     if (!uploadResponse.ok)
     {
         throw new Error("Failed to upload to s3 with upload url")
+        // We need to delete the orphaned metadata record. Leaving for now,
+        // involves delete invoice lambda, service function, etc
     }
 
     return data.invoice

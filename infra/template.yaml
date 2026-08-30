@@ -72,7 +72,7 @@ Resources:
     Properties:
       CorsConfiguration:
         AllowOrigins:
-          - "https://localhost:3000" # Would be removed in a production scenario. Only for local testing.
+          - "http://localhost:3000" # Would be removed in a production scenario. Only for local testing.
           - !Sub "https://${CloudFrontDistribution.DomainName}"
         AllowHeaders:
           - "*"
@@ -232,7 +232,7 @@ Resources:
       CorsConfiguration:
         CorsRules:
           - AllowedOrigins:
-              - "https://localhost:3000" # Would be removed in a production scenario. Only for local testing.
+              - "http://localhost:3000" # Would be removed in a production scenario. Only for local testing.
               - !Sub "https://${CloudFrontDistribution.DomainName}"
             AllowedMethods:
               - PUT

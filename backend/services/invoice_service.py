@@ -24,6 +24,7 @@ class InvoiceService:
         invoice_metadata = InvoiceMetadata(
             invoice_id=invoice_id,
             s3_key=s3_key,
+            filename=filename,
             content_type=content_type,
             status=InvoiceStatus.PENDING_UPLOAD,
             uploaded_at=None

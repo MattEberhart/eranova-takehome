@@ -11,6 +11,7 @@ class InvoiceStatus(str, Enum):
 class InvoiceMetadata(BaseModel):
     invoice_id: str
     s3_key: str
+    filename: str
     content_type: str
     status: InvoiceStatus
     uploaded_at: datetime | None

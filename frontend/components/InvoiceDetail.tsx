@@ -41,7 +41,7 @@ export default function InvoiceDetail({
               </dt>
 
               <dd className="mt-1">
-                {new Date(invoice.createdAt).toLocaleString()}
+                {new Date(invoice.uploaded_at).toLocaleString()}
               </dd>
             </div>
 
@@ -51,7 +51,7 @@ export default function InvoiceDetail({
               </dt>
 
               <dd className="mt-1 break-all text-sm text-zinc-400">
-                {invoice.id}
+                {invoice.invoice_id}
               </dd>
             </div>
           </dl>

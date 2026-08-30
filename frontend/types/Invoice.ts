@@ -1,6 +1,8 @@
 export type InvoiceMetadata = {
-    id: string;
+    invoice_id: string;
+    s3_key: string;
+    content_type: string;
     filename: string;
     status: string;
-    createdAt: string;
+    uploaded_at: string;
 };
