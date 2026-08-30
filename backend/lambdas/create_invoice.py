@@ -8,7 +8,7 @@ def handler(event, context):
 
     invoice = service.create_invoice(
         filename=body["filename"],
-        content_type=body["content_type"],
+        content_type=body["contentType"],
     )
 
     upload_url = service.create_invoice_upload_url(invoice)

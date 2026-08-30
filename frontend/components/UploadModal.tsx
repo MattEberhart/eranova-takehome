@@ -3,6 +3,7 @@ import { ChangeEvent } from "react";
 type Props = {
   file: File | null;
   uploading: boolean;
+  uploadingFailed: boolean;
   onFileChange: (event: ChangeEvent<HTMLInputElement>) => void;
   onUpload: () => void;
   onClose: () => void;
@@ -11,6 +12,7 @@ type Props = {
 export default function UploadModal({
   file,
   uploading,
+  uploadingFailed,
   onFileChange,
   onUpload,
   onClose,
@@ -42,6 +44,11 @@ export default function UploadModal({
             className="hidden"
           />
         </label>
+
+        {(uploadingFailed) && (
+          <div>
+            UPLOAD FAILED
+          </div>)}
 
         <div className="mt-6 flex justify-end gap-3">
           <button

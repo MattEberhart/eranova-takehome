@@ -20,6 +20,7 @@ export default function Home() {
 
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [uploadingFailed, setUploadingFailed] = useState(false);
 
   useEffect(() => {
     loadInvoices();
@@ -46,6 +47,7 @@ export default function Home() {
     try
     {
       setUploading(true);
+      setUploadingFailed(false);
 
       await createInvoice(selectedFile);
 
@@ -57,6 +59,8 @@ export default function Home() {
     catch (error) {
       console.error(error);
       alert("Invoice upload failed")
+      setUploading(false);
+      setUploadingFailed(true);
     }
   }
 
@@ -81,6 +85,7 @@ export default function Home() {
     if (file)
     {
       setSelectedFile(file);
+      setUploadingFailed(false);
     }
   }
 
@@ -120,11 +125,13 @@ export default function Home() {
               <UploadModal
                 file={selectedFile}
                 uploading={uploading}
+                uploadingFailed={uploadingFailed}
                 onFileChange={handleFileChange}
                 onUpload={handleUpload}
                 onClose={() => {
                   setUploadOpen(false);
                   setSelectedFile(null);
+                  setUploadingFailed(false);
                 }}/>
             )}
             

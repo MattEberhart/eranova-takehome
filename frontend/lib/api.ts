@@ -37,7 +37,7 @@ export async function createInvoice(file: File): Promise<InvoiceMetadata> {
     }
 
     var data = await response.json();
-
+    
     var uploadResponse = await fetch(data.uploadUrl, {
         method: "PUT",
         headers: {

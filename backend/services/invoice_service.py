@@ -34,6 +34,16 @@ class InvoiceService:
 
         return invoice_metadata
 
+    def put_invoice(
+        self,
+        invoice_metadata: InvoiceMetadata
+    ) -> InvoiceMetadata:
+        self.table.put_item(
+            Item=invoice_metadata.model_dump(mode="json")
+        )
+
+        return invoice_metadata
+
 
     def get_invoice(
         self,
