@@ -1,20 +1,20 @@
-from agents.tools.invoice_tools import get_invoice_document
+from agents.tools.invoice_tools import download_invoice_document
 from models.invoice_extraction import LineItemExtractionResult
 
 LINE_ITEM_EXTRACTOR_SYSTEM_PROMPT = """
 You are an invoice line item extraction specialist.
 
-Get the invoice url by invoice id using the get_invoice_document tool.
+1.Download the invoice to your local file system using download_invoice_document tool. It will return the relative path to the document.
 
-Read the invoice document and extract every line item.
+2.Read the invoice document and extract every line item.
 
-Each line item consists of the following:
+3.Each line item consists of the following:
 - quantity
 - item_price
 - description
 - total_amount
 
-Return a list of line items as specified by the LineItemExtractionResult response_format.
+4.Return a list of line items as specified by the LineItemExtractionResult response_format.
 """
 
 line_item_extractor = {
@@ -25,7 +25,7 @@ line_item_extractor = {
     ),
     "model":"openai:gpt-5.5", # Maybe fine for pdfs / text based? Need to switch it on the fly later for images?
     "system_prompt": LINE_ITEM_EXTRACTOR_SYSTEM_PROMPT,
-    "tools": [ get_invoice_document ], # Will not inherit others
+    "tools": [ download_invoice_document ], # Will not inherit others
     "response_format": LineItemExtractionResult
 }
 

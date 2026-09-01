@@ -6,6 +6,9 @@ from agents.tools.tax_tools import calculate_line_item_taxes
 from agents.tools.invoice_tools import put_invoice_extraction, convert_to_extraction_result
 from langgraph.checkpoint.memory import InMemorySaver # This does not work long term because lambdas are serverless. Just putting it here so we remember to implement a cloud based one.
 from langchain_quickjs import CodeInterpreterMiddleware
+from deepagents.backends import FilesystemBackend
+from pathlib import Path
+from agents.constants import INVOICE_AGENT_WORKSPACE_DIR
 
 
 
@@ -25,6 +28,11 @@ Do not assist the user with any other queries.
 
 checkpointer = InMemorySaver() # Again, does not work for follow ups in serverless
 
+
+INVOICE_AGENT_WORKSPACE_DIR.mkdir(parents=True, exist_ok=True)
+agent_backend = FilesystemBackend(root_dir=str(INVOICE_AGENT_WORKSPACE_DIR), virtual_mode=True)
+
+
 invoice_processor = create_deep_agent(
     model="openai:gpt-5.5",
     system_prompt=INVOICE_PROCESSOR_SYSTEM_PROMPT,
@@ -35,5 +43,6 @@ invoice_processor = create_deep_agent(
     ],
     response_format=InvoiceExtraction,
     checkpointer=checkpointer,
-    middleware=[CodeInterpreterMiddleware()] # Not explicitly instructing it to use this, but it may choose to.
+    middleware=[CodeInterpreterMiddleware()], # Not explicitly instructing it to use this, but it may choose to.
+    backend=agent_backend # Sub agents inherit this - line_item_extractor is the one that needs it for downloaded invoice.
 )

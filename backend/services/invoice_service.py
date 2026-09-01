@@ -79,7 +79,7 @@ class InvoiceService:
     def get_invoice_url(
         self,
         invoice_document_key: str,
-        expires_in: int = 60):
+        expires_in: int = 300):
 
         return self.s3.generate_presigned_url(
             "get_object",
