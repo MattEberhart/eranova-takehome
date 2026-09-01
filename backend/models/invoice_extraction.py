@@ -7,9 +7,9 @@ from models.tax_category import TaxCategory
 class LineItem(BaseModel):
     # Extraction Agent Sets These
     quantity: int
-    item_price: Decimal
+    item_price: float
     description: str
-    total_amount: Decimal
+    total_amount: float
 
 
 # Need pydantic type to enfore response_format in extractor agent.
@@ -27,6 +27,8 @@ class TaxCategorizedLineItemCategorizationResult(BaseModel):
 
 class TaxedLineItem(TaxCategorizedLineItem):
     # Set Deterministically After Categorized
+    item_price: Decimal ## Override LineItem float that was used for extraction
+    total_amount: Decimal ## Override LineItem float that was used for extraciton
     tax_rate: Decimal
     tax_amount: Decimal
 
