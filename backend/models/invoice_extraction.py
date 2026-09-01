@@ -30,6 +30,6 @@ class TaxedLineItem(TaxCategorizedLineItem):
     tax_amount: float
 
 class InvoiceExtraction(BaseModel):
-    invoice_extraction_id: str
+    extraction_id: str
     invoice_metadata_id: str
     line_items: list[TaxedLineItem]

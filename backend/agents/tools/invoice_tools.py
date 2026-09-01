@@ -73,7 +73,7 @@ def convert_to_extraction_result(
     Arg: categorization result to be converted and the invoice metadata id to be written as well.
     """
     return InvoiceExtraction(
-        invoice_extraction_id=str(uuid4()),
+        extraction_id=str(uuid4()),
         invoice_metadata_id=invoice_metadata_id,
         line_items=taxed_line_items
     )
