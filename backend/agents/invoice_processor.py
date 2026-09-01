@@ -2,8 +2,8 @@ from deepagents import create_deep_agent
 from agents.line_item_extractor import line_item_extractor
 from agents.tax_categorizer import tax_categorizer
 from models.invoice_extraction import InvoiceExtraction
-from tools.tax_tools import calculate_line_item_taxes
-from tools.invoice_tools import put_invoice_extraction, convert_to_extraction_result
+from agents.tools.tax_tools import calculate_line_item_taxes
+from agents.tools.invoice_tools import put_invoice_extraction, convert_to_extraction_result
 from langgraph.checkpoint.memory import InMemorySaver # This does not work long term because lambdas are serverless. Just putting it here so we remember to implement a cloud based one.
 from langchain_quickjs import CodeInterpreterMiddleware
 

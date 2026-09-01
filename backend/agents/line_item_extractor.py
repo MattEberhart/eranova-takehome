@@ -1,4 +1,4 @@
-from tools.invoice_tools import get_invoice_document
+from agents.tools.invoice_tools import get_invoice_document
 from models.invoice_extraction import LineItemExtractionResult
 
 LINE_ITEM_EXTRACTOR_SYSTEM_PROMPT = """
