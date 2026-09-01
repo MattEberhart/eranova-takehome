@@ -1,5 +1,5 @@
 from services.invoice_service import InvoiceService
-from backend.models.invoice_document import InvoiceStatus
+from models.invoice_document import InvoiceStatus
 import json
 from agents.invoice_processor import invoice_processor
 

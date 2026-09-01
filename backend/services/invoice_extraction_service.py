@@ -1,7 +1,7 @@
 import boto3
 import os
 import uuid
-from backend.models.invoice_document import InvoiceDocumentMetadata, InvoiceStatus
+from models.invoice_document import InvoiceDocumentMetadata, InvoiceStatus
 from datetime import datetime, timezone
 from models.invoice_extraction import InvoiceExtraction
 
