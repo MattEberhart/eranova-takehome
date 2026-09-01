@@ -84,7 +84,7 @@ class InvoiceService:
         return self.s3.generate_presigned_url(
             "get_object",
             Params={
-                "Bucket": self.bucket_name,
+                "Bucket": self.bucket,
                 "Key": invoice_document_key
             },
             ExpiresIn=expires_in
