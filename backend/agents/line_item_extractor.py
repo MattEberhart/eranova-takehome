@@ -1,5 +1,6 @@
 from agents.tools.invoice_tools import download_invoice_document
 from models.invoice_extraction import LineItemExtractionResult
+from agents.constants import extractor_model
 
 LINE_ITEM_EXTRACTOR_SYSTEM_PROMPT = """
 You are an invoice line item extraction specialist.
@@ -27,7 +28,7 @@ line_item_extractor = {
         "Reads an invoice document of any time (PDF, image, structured, unstructured) and extracts all line items."
 
     ),
-    "model":"openai:gpt-5.5", # Maybe fine for pdfs / text based? Need to switch it on the fly later for images?
+    "model":extractor_model, # Maybe fine for pdfs / text based? Need to switch it on the fly later for images? Its multi modal, but need to pass the files a certain way.
     "system_prompt": LINE_ITEM_EXTRACTOR_SYSTEM_PROMPT,
     "tools": [ download_invoice_document ], # Will not inherit others
     "response_format": LineItemExtractionResult

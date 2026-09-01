@@ -8,7 +8,7 @@ from langgraph.checkpoint.memory import InMemorySaver # This does not work long 
 from langchain_quickjs import CodeInterpreterMiddleware
 from deepagents.backends import FilesystemBackend
 from pathlib import Path
-from agents.constants import INVOICE_AGENT_WORKSPACE_DIR
+from agents.constants import INVOICE_AGENT_WORKSPACE_DIR, processor_model
 
 
 
@@ -34,7 +34,7 @@ agent_backend = FilesystemBackend(root_dir=str(INVOICE_AGENT_WORKSPACE_DIR), vir
 
 
 invoice_processor = create_deep_agent(
-    model="openai:gpt-5.5",
+    model=processor_model,
     system_prompt=INVOICE_PROCESSOR_SYSTEM_PROMPT,
     tools=[calculate_line_item_taxes, put_invoice_extraction, convert_to_extraction_result],
     subagents=[

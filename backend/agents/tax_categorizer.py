@@ -1,6 +1,7 @@
 from models.invoice_extraction import TaxCategorizedLineItemCategorizationResult
 from models.tax_category import TAX_CATEGORY_DETAILS
 from langchain_quickjs import CodeInterpreterMiddleware
+from agents.constants import tax_categorizer_model
 
 
 def tax_categorizer_prompt() -> str:
@@ -31,7 +32,7 @@ tax_categorizer = {
         "Categorizes invoice line items by tax category."
     ),
     "system_prompt": tax_categorizer_prompt(),
-    "model": "openai:gpt-5.5",
+    "model": tax_categorizer_model,
     "tools": [], # Empty to not inherit
     "response_format": TaxCategorizedLineItemCategorizationResult,
     "middleware": [CodeInterpreterMiddleware()] # Use A Workflow in the system prompt should make it use this.
