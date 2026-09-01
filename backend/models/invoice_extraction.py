@@ -2,7 +2,7 @@ from datetime import datetime
 from pydantic import BaseModel
 from decimal import Decimal
 from enum import Enum
-from tax_category import TaxCategory
+from models.tax_category import TaxCategory
 
 class LineItem(BaseModel):
     # Extraction Agent Sets These
