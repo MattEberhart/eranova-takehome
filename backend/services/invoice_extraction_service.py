@@ -2,7 +2,7 @@ import boto3
 import os
 from models.invoice_document import InvoiceDocumentMetadata, InvoiceStatus
 from models.invoice_extraction import InvoiceExtraction
-
+from decimal import Decimal
 
 class InvoiceExtractionService:
     def __init__(self):
@@ -15,5 +15,5 @@ class InvoiceExtractionService:
         invoice_extraction:InvoiceExtraction) -> InvoiceExtraction:
     
         self.extraction_table.put_item(
-        Item=invoice_extraction.model_dump(mode="json")
+        Item=invoice_extraction.model_dump(mode="json", parse_float=Decimal,)
     )
