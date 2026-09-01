@@ -7,6 +7,7 @@ boto3==1.43.83
 botocore==1.43.83
 certifi==2026.7.22
 charset-normalizer==3.3.2
+deepagents
 distro==1.9.0
 django_injector==0.3.1
 et_xmlfile==2.0.0
@@ -27,6 +28,7 @@ langchain==1.3.18
 langchain-core==1.6.1
 langchain-openai==1.6.0
 langchain-protocol==0.0.19
+langchain_quickjs
 langgraph==1.2.11
 langgraph-checkpoint==4.2.0
 langgraph-prebuilt==1.1.0

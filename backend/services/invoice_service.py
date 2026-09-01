@@ -1,7 +1,7 @@
 import boto3
 import os
 import uuid
-from models.invoice import InvoiceMetadata, InvoiceStatus
+from backend.models.invoice_document import InvoiceDocumentMetadata, InvoiceStatus
 from datetime import datetime, timezone
 
 class InvoiceService:
@@ -12,16 +12,18 @@ class InvoiceService:
         self.s3 = boto3.client("s3")
         self.bucket = os.environ["INVOICES_BUCKET"]
 
+        self.extraction_table = self.dynamodb.Table(os.environ["INVOICE_EXTRACTIONS_TABLE"])
+
     def create_invoice(
         self,
         filename: str,
         content_type
-        ) -> InvoiceMetadata:
+        ) -> InvoiceDocumentMetadata:
 
         invoice_id = f"inv_{uuid.uuid4()}"
         s3_key = f"invoices/{invoice_id}/{filename}"
 
-        invoice_metadata = InvoiceMetadata(
+        invoice_metadata = InvoiceDocumentMetadata(
             invoice_id=invoice_id,
             s3_key=s3_key,
             filename=filename,
@@ -35,10 +37,11 @@ class InvoiceService:
         )
 
         return invoice_metadata
+        
 
     def get_invoice(
         self,
-        invoice_id:str) -> InvoiceMetadata | None:
+        invoice_id:str) -> InvoiceDocumentMetadata | None:
         response = self.table.get_item(
             Key={"invoice_id": invoice_id}
         )
@@ -48,21 +51,21 @@ class InvoiceService:
         if item is None:
             return None
 
-        return InvoiceMetadata.model_validate(item)
+        return InvoiceDocumentMetadata.model_validate(item)
 
 
     def list_invoices(
         self,
-        limit: int = 10) -> list[InvoiceMetadata]:
+        limit: int = 10) -> list[InvoiceDocumentMetadata]:
         response = self.table.scan(Limit=limit)
         return [
-            InvoiceMetadata.model_validate(item)
+            InvoiceDocumentMetadata.model_validate(item)
             for item in response.get("Items", [])
         ]
 
     def create_invoice_upload_url(
         self,
-        invoice: InvoiceMetadata) -> str:
+        invoice: InvoiceDocumentMetadata) -> str:
         return self.s3.generate_presigned_url(
             "put_object",
             Params={
@@ -73,11 +76,25 @@ class InvoiceService:
             ExpiresIn=900,
         )
 
+    def get_invoice_url(
+        self,
+        invoice_document_key: str,
+        expires_in: int = 60):
+
+        return self.s3.generate_presigned_url(
+            "get_object",
+            Params={
+                "Bucket": self.bucket_name,
+                "Key": invoice_document_key
+            },
+            ExpiresIn=expires_in
+        )
+
     def mark_invoice_processing(
             self,
             invoice_id: str,
             status: InvoiceStatus
-    ) -> InvoiceMetadata:
+    ) -> InvoiceDocumentMetadata:
         response = self.table.update_item(
             Key={
                 "invoice_id": invoice_id
@@ -93,5 +110,5 @@ class InvoiceService:
             ReturnValues="ALL_NEW"
         )
 
-        return InvoiceMetadata(**response["Attributes"])
+        return InvoiceDocumentMetadata(**response["Attributes"])
         

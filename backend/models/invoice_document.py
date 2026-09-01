@@ -8,7 +8,7 @@ class InvoiceStatus(str, Enum):
     EXTRACTED = "EXTRACTED"
     FAILED = "FAILED"
 
-class InvoiceMetadata(BaseModel):
+class InvoiceDocumentMetadata(BaseModel):
     invoice_id: str
     s3_key: str
     filename: str
