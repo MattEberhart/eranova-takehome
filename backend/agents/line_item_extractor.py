@@ -14,8 +14,12 @@ You are an invoice line item extraction specialist.
 - description
 - total_amount
 
-4.Return a list of line items as specified by the LineItemExtractionResult response_format.
+4. Once you have extracted all line items, delete the downloaded document from our local file system. NOT FROM S3! This is to prevent later runs from mistakingly using it. Delete only the downloaded document that we downloaded and used in this agent run!
+
+5.Return the list of line items as specified by the LineItemExtractionResult response_format.
 """
+# Step 4 should probably be a middleware or more deterministic so the model doesn't go deleting other files used by other invocations.
+# Just prompting the agent to be safe is not safe.
 
 line_item_extractor = {
     "name": "line-item-extractor",
