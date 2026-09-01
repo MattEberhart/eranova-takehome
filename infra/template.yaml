@@ -192,6 +192,8 @@ Resources:
       CodeUri: ../backend/
       Handler: lambdas.process_invoice.handler
       Runtime: python3.12
+      Timeout: 300
+      MemorySize: 1024
 
       Events:
         InvoiceUploaded:

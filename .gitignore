@@ -17,3 +17,7 @@ frontend/out/
 
 # SAM (Serverless Application Manager)
 .aws-sam
+
+# Added venv so Pylance could resolve everything. was missing boto and langchain for some reason.
+# Ignore the interpreter settings changfe
+settings.json
