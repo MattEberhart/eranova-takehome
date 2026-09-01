@@ -34,5 +34,5 @@ tax_categorizer = {
     "model": "openai:gpt-5.5",
     "tools": [], # Empty to not inherit
     "response_format": TaxCategorizedLineItemCategorizationResult,
-    "middleware": [CodeInterpreterMiddleware] # Use A Workflow in the system prompt should make it use this.
+    "middleware": [CodeInterpreterMiddleware()] # Use A Workflow in the system prompt should make it use this.
 }
