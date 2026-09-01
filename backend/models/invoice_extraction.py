@@ -1,6 +1,5 @@
 from datetime import datetime
 from pydantic import BaseModel
-from decimal import Decimal
 from enum import Enum
 from models.tax_category import TaxCategory
 
@@ -27,10 +26,8 @@ class TaxCategorizedLineItemCategorizationResult(BaseModel):
 
 class TaxedLineItem(TaxCategorizedLineItem):
     # Set Deterministically After Categorized
-    item_price: Decimal ## Override LineItem float that was used for extraction
-    total_amount: Decimal ## Override LineItem float that was used for extraciton
-    tax_rate: Decimal
-    tax_amount: Decimal
+    tax_rate: float
+    tax_amount: float
 
 class InvoiceExtraction(BaseModel):
     invoice_extraction_id: str
