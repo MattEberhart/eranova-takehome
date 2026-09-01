@@ -1,13 +1,12 @@
 import boto3
 import os
-import uuid
 from models.invoice_document import InvoiceDocumentMetadata, InvoiceStatus
-from datetime import datetime, timezone
 from models.invoice_extraction import InvoiceExtraction
 
 
 class InvoiceExtractionService:
     def __init__(self):
+        self.dynamodb = boto3.resource("dynamodb")
         self.extraction_table = self.dynamodb.Table(os.environ["INVOICE_EXTRACTIONS_TABLE"])
 
 

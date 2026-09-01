@@ -34,3 +34,18 @@ I used LangChain deep agents sdk for the agentic extraction/categorization. Each
 - tax_categorizer has no tools. The categories and their description are injectred to the system prompt. I did give it a code interpreter so that it can programatically categorize each line item - the system prompt uses the magic "Workflow" word to force this.
 
 Extra Note: I extended some and wrote specific model classes for certain use cases. The idea was to force the model's hand when it extracted data. For example rather than allow it to write the final Extraction object when it extracts line items, I force it to write a custom object which is a list of LineItems. And this LineItem doesn't include tax or tax amount, just the fields I expecte the model to find. Feels like there is probably a better way to do that because I feel I have too many of the same-looking model classes.
+
+
+## Design Thoughts
+- Getting Pre authed upload url then uploading can leave an orphaned metadata if upload fails or if we were to expose this pattern programatically. Passing files through gateway to lambdas to handle this server side comes with other issues. Maybe some cleanup on pending uploads that have been sitting too long would be good
+- Invoking process_invoice on s3 upload was just the quickest way to get moving. Ideally if the processing fails we would mark it failed in the metadata record, but if not we have an eternally "Processing" file. If it is in Failed state we would need a job or UX to retry it. Would want message queue to track this work maybe so the work gets retried.
+
+
+## Fun Infra Learnings
+- Have never hosted WebApp in S3 or object storage. Had never heard of CloudFront. In the past I've just pushed the packaged files to an Azure App Service or lately Vercel just handles it all for me. Pretty cool concept
+- Having an S3 for the python artifacts / code was also new to me. I guess I thought CloudFormation would package the code on the GitHub actions machine and deploy it to the lambdas. My understanding is I had to get SAM to build / package the code and create its own derivative deployment template, then cloud formation package pushed it to s3, only then could cloud formation deploy it to the lambdas.
+- CloudWatch logs to debug my lambdas were super helpful
+- Secrets were there own resources rather than creating a KeyVault and then child secrets like in Azure
+- Circular dependency of IAM policies between S3 triggered lambda and S3 was a funny one. Seems like a super common pattern that should not require a funky workaround - I probably missed something.
+
+## Feature Ideas
