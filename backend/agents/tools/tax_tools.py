@@ -29,7 +29,8 @@ def calculate_line_item_taxes(
             description=line_item.description,
             total_amount=line_item.total_amount,
             tax_rate=category_details.tax_rate,
-            tax_amount=tax_amount
+            tax_amount=tax_amount,
+            category=line_item.category
         )
 
         taxed_items.append(taxed_line_item)

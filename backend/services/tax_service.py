@@ -7,5 +7,5 @@ class TaxService:
     def __init__(self):
         return
     
-    def get_tax_category_details(tax_category:TaxCategory) -> TaxCategoryDetails:
+    def get_tax_category_details(self, tax_category:TaxCategory) -> TaxCategoryDetails:
         return TAX_CATEGORY_DETAILS[tax_category]
