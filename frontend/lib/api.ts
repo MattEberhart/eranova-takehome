@@ -3,8 +3,23 @@ import {InvoiceMetadata, InvoicePage} from "../types/Invoice";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export async function listInvoices(): Promise<InvoicePage> {
-    var response = await fetch(`${API_URL}/invoices`);
+export async function listInvoices(
+    cursor: string | null = null,
+    limit: number = 20,
+    order: string = "desc"
+): Promise<InvoicePage> {
+
+    var params = new URLSearchParams({
+        limit: limit.toString(),
+        order
+    });
+
+    if (cursor)
+    {
+        params.set("cursor", cursor)
+    }
+
+    const response = await fetch(`${API_URL}/invoices?${params.toString()}`);
 
     if (!response.ok)
     {
@@ -12,9 +27,7 @@ export async function listInvoices(): Promise<InvoicePage> {
         throw new Error("Failed to fetch invoices")
     }
 
-    const data = await response.json();
-
-    return data.invoices
+    return response.json();
 }
 
 export async function createInvoice(file: File): Promise<InvoiceMetadata> {

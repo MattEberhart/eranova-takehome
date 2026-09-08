@@ -12,7 +12,7 @@ import { InvoiceExtraction } from "@/types/InvoiceExtraction";
 
 export default function Home() {
 
-  const [invoices, setInvoices] = useState<InvoicePage | null>(null);
+  const [invoices, setInvoices] = useState<InvoicePage>({invoices:[], next_cursor:null});
   const [selectedInvoice, setSelectedInvoice] = useState<InvoiceMetadata | null>(null);
   const [documentUrl, setDocumentUrl] = useState<string | null>(null);
   const [invoiceExtraction, setInvoiceExtraction] = useState<InvoiceExtraction | null>(null);
@@ -20,7 +20,6 @@ export default function Home() {
   const [uploadOpen, setUploadOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [uploadingFailed, setUploadingFailed] = useState(false);
 
@@ -29,16 +28,9 @@ export default function Home() {
   }, [])
 
   async function loadInvoices() {
-    try
-    {
-      setLoading(true);
       const data = await listInvoices();
 
       setInvoices(data);
-    } finally
-    {
-      setLoading(false);
-    }
   }
 
   async function handleUpload() {
@@ -120,8 +112,7 @@ export default function Home() {
               }}/>
             ) : (
               <InvoiceList
-                invoices={invoices}
-                loading={loading}
+                first_page={invoices}
                 onSelect={handleInvoiceClick}
                 />
             )}

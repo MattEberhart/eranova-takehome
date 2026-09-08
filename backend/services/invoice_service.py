@@ -4,6 +4,7 @@ import uuid
 from models.invoice_document import InvoiceDocumentMetadata, InvoiceStatus, InvoicePage
 from datetime import datetime, timezone
 from helpers.pagination_helpers import encode_cursor, decode_cursor
+from boto3.dynamodb.conditions import Key
 
 class InvoiceService:
     def __init__(self):
@@ -61,7 +62,7 @@ class InvoiceService:
         self,
         limit: int = 10,
         cursor: str | None = None,
-        descending: bool = True) -> list[InvoiceDocumentMetadata]:
+        descending: bool = True) -> InvoicePage:
 
         query_args = {
             "IndexName": "invoices-created-at-index",
@@ -72,7 +73,7 @@ class InvoiceService:
 
         start_key = decode_cursor(cursor)
         if start_key:
-            query_args["ExclusiveStartKey"] = exclusive_start_key
+            query_args["ExclusiveStartKey"] = start_key
 
 
         response = self.table.query(**query_args)
