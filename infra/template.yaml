@@ -262,9 +262,19 @@ Resources:
       AttributeDefinitions:
         - AttributeName: extraction_id
           AttributeType: S
+        - AttributeName: invoice_metadata_id
+          AttributeType: S
       KeySchema:
         - AttributeName: extraction_id
           KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: invoice-metadata-id-index
+          KeySchema:
+            - AttributeName: invoice_metadata_id
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
 
   # Secrets / Keys - Create Only - Values Set Manually so Not In Source Control
   OpenAIKey:

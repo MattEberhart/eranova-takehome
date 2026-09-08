@@ -8,12 +8,14 @@ import { InvoiceMetadata } from "@/types/Invoice";
 import InvoiceDetail from "@/components/InvoiceDetail";
 import InvoiceList from "@/components/InvoiceList";
 import UploadModal from "@/components/UploadModal";
+import { InvoiceExtraction } from "@/types/InvoiceExtraction";
 
 export default function Home() {
 
   const [invoices, setInvoices] = useState<InvoiceMetadata[]>([]);
   const [selectedInvoice, setSelectedInvoice] = useState<InvoiceMetadata | null>(null);
   const [documentUrl, setDocumentUrl] = useState<string | null>(null);
+  const [invoiceExtraction, setInvoiceExtraction] = useState<InvoiceExtraction | null>(null);
 
   const [uploadOpen, setUploadOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -69,8 +71,9 @@ export default function Home() {
     {
       const data = await getInvoice(invoice.invoice_id);
 
-      setSelectedInvoice(data.invoice);
-      setDocumentUrl(data.documentUrl);
+      setSelectedInvoice(data.invoice_metadata);
+      setDocumentUrl(data.invoice_document_url);
+      setInvoiceExtraction(data.invoice_extraction);
     } catch (error)
     {
       console.error(error);
@@ -109,9 +112,11 @@ export default function Home() {
             <InvoiceDetail
               invoice={selectedInvoice}
               documentUrl={documentUrl}
+              invoiceExtraction={invoiceExtraction}
               onBack={() => {
                 setSelectedInvoice(null);
                 setDocumentUrl(null);
+                setInvoiceExtraction(null);
               }}/>
             ) : (
               <InvoiceList

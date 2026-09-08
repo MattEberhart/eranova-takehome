@@ -1,14 +1,17 @@
 import { InvoiceMetadata } from "@/types/Invoice";
+import { InvoiceExtraction } from "@/types/InvoiceExtraction";
 
 type Props = {
   invoice: InvoiceMetadata;
   documentUrl: string | null;
+  invoiceExtraction: InvoiceExtraction| null;
   onBack: () => void;
 };
 
 export default function InvoiceDetail({
   invoice,
   documentUrl,
+  invoiceExtraction,
   onBack,
 }: Props) {
   return (
