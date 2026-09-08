@@ -32,7 +32,7 @@ class InvoiceService:
             content_type=content_type,
             status=InvoiceStatus.PENDING_UPLOAD,
             uploaded_at=None,
-            created_at=datetime.now,
+            created_at=datetime.now(timezone.utc),
             record_type="INVOICE"
         )
 
