@@ -47,6 +47,7 @@ export default function Home() {
       await createInvoice(selectedFile);
 
       setSelectedFile(null);
+      setUploading(false);
       setUploadOpen(false);
 
       await loadInvoices();
