@@ -29,8 +29,9 @@ export default function Home() {
 
   async function loadInvoices() {
       const data = await listInvoices();
-
+      console.log(data)
       setInvoices(data);
+      console.log(invoices)
   }
 
   async function handleUpload() {

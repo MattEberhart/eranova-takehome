@@ -174,6 +174,10 @@ Resources:
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref InvoicesMetadataTable
+        - DynamoDBReadPolicy:
+            TableName: !Ref InvoiceExtractionsTable
+        - S3CrudPolicy:
+            BucketName: !Ref InvoicesBucket
 
       Environment:
         Variables:

@@ -16,6 +16,11 @@ export default function InvoiceList({
   const [cursor, setCursor] = useState<string | null>(first_page.next_cursor)
   const [loading, setLoading] = useState<boolean>(false);
 
+  useEffect(() => {
+    setInvoices(first_page.invoices);
+    setCursor(first_page.next_cursor);
+  }, [first_page])
+
   async function loadMoreInvoices() {
     setLoading(true);
     var nextPage = await listInvoices(
