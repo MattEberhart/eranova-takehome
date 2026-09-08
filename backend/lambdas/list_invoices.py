@@ -8,7 +8,7 @@ service = InvoiceService()
 def handler(event, context):
 
     params = event.get("queryStringParameters") or {}
-    limit = params.get("limit", 20)
+    limit = int(params.get("limit", 20))
     order = params.get("order", "desc").lower()
     cursor = params.get("cursor")
     descending = order == "desc"
