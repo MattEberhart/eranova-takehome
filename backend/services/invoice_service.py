@@ -80,7 +80,7 @@ class InvoiceService:
 
         return InvoicePage(
             invoices=[InvoiceDocumentMetadata.model_validate(item) for item in response.get("Items")],
-            next_cursor=response.get("LastEvaluatedKey")
+            next_cursor=encode_cursor(response.get("LastEvaluatedKey"))
         )
 
     def create_invoice_upload_url(

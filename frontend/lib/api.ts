@@ -5,7 +5,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function listInvoices(
     cursor: string | null = null,
-    limit: number = 20,
+    limit: number = 10,
     order: string = "desc"
 ): Promise<InvoicePage> {
 
