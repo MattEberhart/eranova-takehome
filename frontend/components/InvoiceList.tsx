@@ -1,7 +1,7 @@
-import { InvoiceMetadata } from "@/types/Invoice";
+import { InvoiceMetadata, InvoicePage } from "@/types/Invoice";
 
 type Props = {
-  invoices: InvoiceMetadata[];
+  invoices: InvoicePage | null;
   loading: boolean;
   onSelect: (invoice: InvoiceMetadata) => void;
 };
@@ -15,7 +15,7 @@ export default function InvoiceList({
     return <p className="text-zinc-400">Loading invoices...</p>;
   }
 
-  if (!invoices || invoices.length === 0) {
+  if (!invoices || invoices.invoices.length === 0) {
     return (
       <div className="rounded-xl border border-zinc-800 p-12 text-center">
         <h2 className="text-lg font-medium">No invoices yet</h2>
@@ -29,7 +29,7 @@ export default function InvoiceList({
 
   return (
     <div className="overflow-hidden rounded-xl border border-zinc-800">
-      {invoices.map((invoice) => (
+      {invoices.invoices.map((invoice) => (
         <button
           key={invoice.invoice_id}
           onClick={() => onSelect(invoice)}

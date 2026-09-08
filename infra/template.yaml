@@ -251,6 +251,10 @@ Resources:
       AttributeDefinitions:
         - AttributeName: invoice_id
           AttributeType: S
+        - AttributeName: record_type
+          AttributeType: S
+        - AttributeName: created_at
+          AttributeType: S
       KeySchema:
         - AttributeName: invoice_id
           KeyType: HASH

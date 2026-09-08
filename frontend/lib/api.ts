@@ -1,9 +1,9 @@
 import { InvoiceExtraction } from "@/types/InvoiceExtraction";
-import {InvoiceMetadata} from "../types/Invoice";
+import {InvoiceMetadata, InvoicePage} from "../types/Invoice";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export async function listInvoices(): Promise<InvoiceMetadata[]> {
+export async function listInvoices(): Promise<InvoicePage> {
     var response = await fetch(`${API_URL}/invoices`);
 
     if (!response.ok)

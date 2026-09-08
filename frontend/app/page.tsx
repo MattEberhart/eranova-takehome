@@ -4,7 +4,7 @@ import {ChangeEvent, useEffect, useState } from "react";
 import {
   createInvoice, getInvoice, listInvoices,
 } from "../lib/api"
-import { InvoiceMetadata } from "@/types/Invoice";
+import { InvoiceMetadata, InvoicePage } from "@/types/Invoice";
 import InvoiceDetail from "@/components/InvoiceDetail";
 import InvoiceList from "@/components/InvoiceList";
 import UploadModal from "@/components/UploadModal";
@@ -12,7 +12,7 @@ import { InvoiceExtraction } from "@/types/InvoiceExtraction";
 
 export default function Home() {
 
-  const [invoices, setInvoices] = useState<InvoiceMetadata[]>([]);
+  const [invoices, setInvoices] = useState<InvoicePage | null>(null);
   const [selectedInvoice, setSelectedInvoice] = useState<InvoiceMetadata | null>(null);
   const [documentUrl, setDocumentUrl] = useState<string | null>(null);
   const [invoiceExtraction, setInvoiceExtraction] = useState<InvoiceExtraction | null>(null);

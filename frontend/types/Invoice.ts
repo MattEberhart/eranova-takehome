@@ -6,3 +6,8 @@ export type InvoiceMetadata = {
     status: string;
     uploaded_at: string;
 };
+
+export type InvoicePage = {
+    invoices:InvoiceMetadata[];
+    next_cursor:string;
+}

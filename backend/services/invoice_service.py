@@ -1,8 +1,9 @@
 import boto3
 import os
 import uuid
-from models.invoice_document import InvoiceDocumentMetadata, InvoiceStatus
+from models.invoice_document import InvoiceDocumentMetadata, InvoiceStatus, InvoicePage
 from datetime import datetime, timezone
+from helpers.pagination_helpers import encode_cursor, decode_cursor
 
 class InvoiceService:
     def __init__(self):
@@ -29,7 +30,9 @@ class InvoiceService:
             filename=filename,
             content_type=content_type,
             status=InvoiceStatus.PENDING_UPLOAD,
-            uploaded_at=None
+            uploaded_at=None,
+            created_at=datetime.now,
+            record_type="INVOICE"
         )
 
         self.table.put_item(
@@ -56,12 +59,28 @@ class InvoiceService:
 
     def list_invoices(
         self,
-        limit: int = 10) -> list[InvoiceDocumentMetadata]:
-        response = self.table.scan(Limit=limit)
-        return [
-            InvoiceDocumentMetadata.model_validate(item)
-            for item in response.get("Items", [])
-        ]
+        limit: int = 10,
+        cursor: str | None = None,
+        descending: bool = True) -> list[InvoiceDocumentMetadata]:
+
+        query_args = {
+            "IndexName": "invoices-created-at-index",
+            "KeyConditionExpression": Key("record_type").eq("INVOICE"),
+            "Limit": limit,
+            "ScanIndexForward": not descending
+        }
+
+        start_key = decode_cursor(cursor)
+        if start_key:
+            query_args["ExclusiveStartKey"] = exclusive_start_key
+
+
+        response = self.table.query(**query_args)
+
+        return InvoicePage(
+            invoices=[InvoiceDocumentMetadata.model_validate(item) for item in response.get("Items")],
+            next_cursor=response.get("LastEvaluatedKey")
+        )
 
     def create_invoice_upload_url(
         self,

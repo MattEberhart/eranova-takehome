@@ -15,3 +15,9 @@ class InvoiceDocumentMetadata(BaseModel):
     content_type: str
     status: InvoiceStatus
     uploaded_at: datetime | None
+    created_at: datetime | None
+    record_type: str
+
+class InvoicePage(BaseModel):
+    invoices:list[InvoiceDocumentMetadata]
+    next_cursor: str | None
