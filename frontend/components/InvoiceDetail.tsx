@@ -14,6 +14,9 @@ export default function InvoiceDetail({
   invoiceExtraction,
   onBack,
 }: Props) {
+
+  var lineItems = invoiceExtraction?.line_items ?? [];
+
   return (
     <div>
       <button
