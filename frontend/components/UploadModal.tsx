@@ -34,12 +34,11 @@ export default function UploadModal({
           </span>
 
           <span className="mt-2 text-sm text-zinc-500">
-            PDF, PNG or JPEG
+            Invoice of any file type!
           </span>
 
           <input
             type="file"
-            accept=".pdf,image/png,image/jpeg"
             onChange={onFileChange}
             className="hidden"
           />

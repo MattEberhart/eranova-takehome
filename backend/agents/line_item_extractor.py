@@ -25,7 +25,7 @@ You are an invoice line item extraction specialist.
 line_item_extractor = {
     "name": "line-item-extractor",
     "description": (
-        "Reads an invoice document of any time (PDF, image, structured, unstructured) and extracts all line items."
+        "Reads an invoice document of any kind (PDF, image, structured, unstructured) and extracts all line items."
 
     ),
     "model":extractor_model, # Maybe fine for pdfs / text based? Need to switch it on the fly later for images? Its multi modal, but need to pass the files a certain way.
