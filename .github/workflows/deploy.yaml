@@ -1,12 +1,26 @@
-name: Deploy
+name: Deploy or Destroy
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      destroy:
+        description: "Delete the Eranova AWS stacks instead of deploying"
+        required: true
+        type: boolean
+        default: false
+
+# A deploy and teardown must never operate on the same stacks concurrently.
+concurrency:
+  group: eranova-takehome-infrastructure
+  cancel-in-progress: false
 
 jobs:
   deploy:
+    # Pushes always deploy. A manual run deploys only when destroy is false.
+    if: ${{ github.event_name == 'push' || !inputs.destroy }}
     runs-on: ubuntu-latest
 
     steps:
@@ -100,3 +114,110 @@ jobs:
           aws cloudfront create-invalidation \
             --distribution-id $DISTRIBUTION \
             --paths "/*"
+
+  destroy:
+    # Destruction is available only through an explicit manual workflow run.
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.destroy }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Empty buckets and delete CloudFormation stacks
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          APP_REGION="us-east-1"
+          APP_STACK="eranova-takehome"
+          APP_ARTIFACT_STACK="eranova-takehome-artifact-bucket"
+          APP_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          APP_INVOICE_BUCKET="eranova-takehome-invoices-${APP_ACCOUNT_ID}-${APP_REGION}"
+
+          stack_exists() {
+            aws cloudformation describe-stacks \
+              --region "$APP_REGION" \
+              --stack-name "$1" >/dev/null 2>&1
+          }
+
+          empty_bucket_if_present() {
+            if aws s3api head-bucket --bucket "$1" 2>/dev/null; then
+              echo "Emptying s3://$1"
+              aws s3 rm "s3://$1" --recursive
+            else
+              echo "Bucket $1 does not exist or is not accessible; skipping"
+            fi
+          }
+
+          if stack_exists "$APP_STACK"; then
+            APP_FRONTEND_BUCKET=$(aws cloudformation describe-stacks \
+              --region "$APP_REGION" \
+              --stack-name "$APP_STACK" \
+              --query "Stacks[0].Outputs[?OutputKey=='FrontendBucketName'].OutputValue" \
+              --output text)
+
+            empty_bucket_if_present "$APP_FRONTEND_BUCKET"
+            empty_bucket_if_present "$APP_INVOICE_BUCKET"
+
+            echo "Deleting CloudFormation stack $APP_STACK"
+            aws cloudformation delete-stack \
+              --region "$APP_REGION" \
+              --stack-name "$APP_STACK"
+            aws cloudformation wait stack-delete-complete \
+              --region "$APP_REGION" \
+              --stack-name "$APP_STACK"
+          else
+            echo "Stack $APP_STACK does not exist; skipping"
+          fi
+
+          if stack_exists "$APP_ARTIFACT_STACK"; then
+            APP_ARTIFACT_BUCKET=$(aws cloudformation describe-stacks \
+              --region "$APP_REGION" \
+              --stack-name "$APP_ARTIFACT_STACK" \
+              --query "Stacks[0].Outputs[?OutputKey=='ArtifactBucketName'].OutputValue" \
+              --output text)
+
+            empty_bucket_if_present "$APP_ARTIFACT_BUCKET"
+
+            echo "Deleting CloudFormation stack $APP_ARTIFACT_STACK"
+            aws cloudformation delete-stack \
+              --region "$APP_REGION" \
+              --stack-name "$APP_ARTIFACT_STACK"
+            aws cloudformation wait stack-delete-complete \
+              --region "$APP_REGION" \
+              --stack-name "$APP_ARTIFACT_STACK"
+          else
+            echo "Stack $APP_ARTIFACT_STACK does not exist; skipping"
+          fi
+
+      # Lambda creates these log groups outside CloudFormation, so stack deletion
+      # does not necessarily remove them.
+      - name: Delete leftover Lambda log groups
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          aws logs describe-log-groups \
+            --region us-east-1 \
+            --log-group-name-prefix '/aws/lambda/eranova-takehome-' \
+            --query 'logGroups[].logGroupName' \
+            --output text \
+            | tr '\t' '\n' \
+            | while IFS= read -r APP_LOG_GROUP; do
+                if [[ -n "$APP_LOG_GROUP" && "$APP_LOG_GROUP" != "None" ]]; then
+                  echo "Deleting log group $APP_LOG_GROUP"
+                  aws logs delete-log-group \
+                    --region us-east-1 \
+                    --log-group-name "$APP_LOG_GROUP"
+                fi
+              done
+
+      - name: Confirm teardown
+        run: |
+          echo "Eranova CloudFormation teardown completed."
+          echo "Remove the repository AWS secrets and revoke their IAM access key if this project will remain offline."
